@@ -1,6 +1,7 @@
 import Request from 'luch-request'
 
-const baseURL = ``
+const baseURL = `https://haoma.800010000.cn/`
+
 const http = new Request()
 http.setConfig((config) => {
     config = {
@@ -37,7 +38,7 @@ http.interceptors.response.use(async (res) => {
         })
         return Promise.reject(new Error())
     }
-    return res
+    return res.data
 }, (error) => {
     if (error.statusCode === 400) {
         uni.showToast({
