@@ -1,0 +1,30 @@
+// 单行文字超长后显示...
+@mixin ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+	/* #ifndef APP-NVUE */
+	white-space: nowrap;
+	/* #endif */
+	lines: 1;
+}
+
+@mixin flex($direction: row) {
+	/* #ifndef APP-NVUE */
+	display: flex;
+	/* #endif */
+	flex-direction: $direction;
+}
+
+@mixin border-radius($num: 8rpx) {
+	border-bottom-left-radius: $num;
+	border-bottom-right-radius: $num;
+	border-top-left-radius: $num;
+	border-top-right-radius: $num;
+}
+
+@mixin border($num: 1px, $color: '#d9d9d9', $type: 'solid') {
+	border-style: $type;
+	border-width: $num;
+	border-color: $color;
+}
+

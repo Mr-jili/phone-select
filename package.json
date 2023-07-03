@@ -1,6 +1,6 @@
 {
   "name": "uni-preset-vue",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "dev:app": "uni -p app",
     "dev:app-android": "uni -p app-android",
@@ -51,8 +51,8 @@
     "@dcloudio/uni-mp-toutiao": "3.0.0-3080420230531001",
     "@dcloudio/uni-mp-weixin": "3.0.0-3080420230531001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-3080420230531001",
-    "vue": "^3.2.45",
-    "vue-i18n": "^9.1.9"
+    "@dcloudio/uni-ui": "^1.4.28",
+    "vue": "^3.2.45"
   },
   "devDependencies": {
     "@dcloudio/types": "^3.3.2",
@@ -60,6 +60,9 @@
     "@dcloudio/uni-cli-shared": "3.0.0-3080420230531001",
     "@dcloudio/uni-stacktracey": "3.0.0-3080420230531001",
     "@dcloudio/vite-plugin-uni": "3.0.0-3080420230531001",
+    "luch-request": "^3.1.0",
+    "sass": "^1.63.6",
+    "sass-loader": "^13.3.2",
     "vite": "4.1.4"
   }
 }

@@ -1,0 +1,22 @@
+.home {
+    width: 100%;
+    background-color: #ad0b1f;
+
+    &-header {
+        img {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    &-pagination {
+        width: 300px;
+        margin: 40px auto;
+    }
+    &-footer {
+        img {
+            width: 100%;
+            height: auto;
+        }
+    }
+}
