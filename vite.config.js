@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite'
 import uni from '@dcloudio/vite-plugin-uni'
+import path from 'path'
+import sass from 'sass'
 
 export default defineConfig({
     transpileDependencies: ['@dcloudio/uni-ui', 'luch-request'],

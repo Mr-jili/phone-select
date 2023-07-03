@@ -7,16 +7,16 @@
             <view class="home-search-top">
                 <view class="home-search-title">地区</view>
                 <view class="home-search-content">
-                    <view class="home-search-content-static">默认</view>
+                    <!-- <view class="home-search-content-static">默认</view> -->
                     <view class="home-search-content-item">南京市</view>
                     <view class="home-search-content-item">无锡市</view>
                     <view class="home-search-content-item">无锡市</view>
                     <view class="home-search-content-item">无锡市</view>
+                    <view class="home-search-content-item">无锡市顶顶顶</view>
                     <view class="home-search-content-item">无锡市</view>
                     <view class="home-search-content-item">无锡市</view>
                     <view class="home-search-content-item">无锡市</view>
-                    <view class="home-search-content-item">无锡市</view>
-                    <view class="home-search-content-item">无锡市</view>
+                    <view class="home-search-content-item">无锡市角度考虑的接口</view>
                     <view class="home-search-content-item">无锡市</view>
                 </view>
             </view>
@@ -29,11 +29,11 @@
                     <view class="home-search-content-item">无锡市</view>
                     <view class="home-search-content-item">无锡市</view>
                     <view class="home-search-content-item">无锡市</view>
-                    <view class="home-search-content-item">无锡市</view>
-                    <view class="home-search-content-item">无锡市</view>
-                    <view class="home-search-content-item">无锡市</view>
-                    <view class="home-search-content-item">不含四
-                        <radio style="transform:scale(0.7)" value="cb" checked="true" />
+                    <view class="home-search-content-item">无锡市444觉得肯定就</view>
+                    <view class="home-search-content-item">无锡市顶顶顶</view>
+                    <view class="home-search-content-item">无锡市23</view>
+                    <view class="home-search-content-item" style="@include flex();align-items: center;padding-right: 0;">不含四
+                        <radio style="transform: scale(0.5);" value="cb" checked="true" />
                     </view>
                     <view class="home-search-content-item">全部</view>
                 </view>
@@ -67,8 +67,8 @@
             </view>
         </view>
         <view class="home-pagination">
-            <view>上一页</view>
-            <view>下一页</view>
+            <view class="home-pagination-pre">上一页</view>
+            <view class="home-pagination-next">下一页</view>
         </view>
         <view class="home-footer">
             <img :src="staticState.footerImg1" alt="">
