@@ -1,13 +1,24 @@
 <template>
     <view class="city-select">
-        <slot :scope="cityPicker"></slot>
+        <slot></slot>
         <uni-data-picker ref="cityPicker" :localdata="areaState.areaList" :map="{ text: 'name', value: 'id' }"
             popup-title="请选择" @change="onchange"></uni-data-picker>
     </view>
 </template>
 <script>
-import { getAreaListApi, getAreaFeatureApi, getNumberListApi } from '@/api/index'
-import { reactive, ref, onMounted, watch } from 'vue';
+import { getAreaListApi } from '@/api/index'
+import { reactive, ref, onMounted, defineProps, defineExpose } from 'vue';
+
+const props = defineProps({
+    level: {
+        type: Number,
+        default: 2
+    },
+    params: {
+        type: Object,
+        default: () => { }
+    }
+})
 
 const cityPicker = ref({})
 const areaState = reactive({
@@ -29,7 +40,15 @@ const getAreaList = async () => {
     getAreaFeature()
 }
 
-const onchange = () => {}
+const onchange = () => { }
+
+const open = () => {
+
+}
+
+defineExpose({
+    open
+})
 
 onMounted(() => {
     getAreaList()

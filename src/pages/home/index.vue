@@ -7,13 +7,14 @@
             <view class="home-search-top">
                 <view class="home-search-title">地区</view>
                 <view class="home-search-content">
-                    <view class="home-search-content-item" @click="handleClickArea"
-                        style="display: flex;align-items: center;color:#00006b;background-color: #ffefce;">{{
-                            areaState.defaultArea }}
-                        <uni-icons type="bottom" size="16"></uni-icons>
-                    </view>
-                    <view class="home-search-content-item"
-                        :style="{ background: !item.active ? 'hsla(0, 0%, 100%, 0.2)' : '#ffffff', color: !item.active ? '#fff' : '#000' }"
+                    <uni-data-picker ref="cityPicker" :localdata="areaState.areaList" :map="{ text: 'name', value: 'id' }"
+                        popup-title="请选择" @change="onchange">
+                        <view :class="['home-search-content-item', 'area']">
+                            {{ areaState.defaultArea }}
+                            <uni-icons type="bottom" size="16"></uni-icons>
+                        </view>
+                    </uni-data-picker>
+                    <view :class="['home-search-content-item', item.active ? 'active' : '']"
                         v-for="(item, index) in areaState.defaultAreaList" :key="item.id" @click="handleClickItem(index)">
                         {{ item.name }}
                     </view>
@@ -22,19 +23,16 @@
             <view class="home-search-bottom">
                 <view class="home-search-title">热搜</view>
                 <view class="home-search-content">
-                    <view class="home-search-content-item"
-                        :style="{ background: !item.active ? 'hsla(0, 0%, 100%, 0.2)' : '#ffffff', color: !item.active ? '#fff' : '#000' }"
+                    <view :class="['home-search-content-item', item.active ? 'active' : '']"
                         v-for="(item, index) in topSearchState.list" :key="item.name" @click="handleClickTopItem(index)">
                         {{ item.name }}
                     </view>
-                    <view :class="['nofour', 'home-search-content-item']"
-                        :style="{ background: !params.nofour ? 'hsla(0, 0%, 100%, 0.2)' : '#ffffff', color: !params.nofour ? '#fff' : '#000' }"
+                    <view :class="['nofour', 'home-search-content-item', params.nofour ? 'active' : '']"
                         @click="handleTopSearchNoFour">不含四
                         <radio @click="handleTopSearchNoFour" style="transform: scale(0.5);" :checked="params.nofour" />
                     </view>
-                    <view class="home-search-content-item"
-                        :style="{ background: !listData.isAll ? 'hsla(0, 0%, 100%, 0.2)' : '#ffffff', color: !listData.isAll ? '#fff' : '#000' }"
-                        @click="handleTopSearch">全部</view>
+                    <view :class="['home-search-content-item', listData.isAll ? 'active' : '']" @click="handleTopSearch">全部
+                    </view>
                 </view>
             </view>
             <view class="home-search-input">
@@ -49,12 +47,7 @@
                 <uni-col :span="12" v-for="item in listData.list" :key="item.number" @click="handleClick(item)">
                     <view class="home-list-item">
                         <view class="home-list-item-top">
-                            <view class="home-list-item-top-phone">
-                                <text v-for="(v, i) in item.number" :key="i + 'A'"
-                                    :style="{ color: v.f ? 'rgb(221, 46, 253)' : 'rgb(92, 92, 119)' }">
-                                    {{ v.i }}
-                                </text>
-                            </view>
+                            <number-style :list="item.numberArray"></number-style>
                             <text class="home-list-item-top-area">{{ item.province }}</text>
                         </view>
                         <view class="home-list-item-bottom">
@@ -65,7 +58,7 @@
                 </uni-col>
             </uni-row>
         </view>
-        <view class="home-pagination">
+        <view class="home-pagination" v-if="listData.list.length > 0">
             <uni-pagination title="标题文字" :current="params.page" :pageSize="params.pagesize" :total="listData.total"
                 @change="onPageChange"></uni-pagination>
         </view>
@@ -74,22 +67,16 @@
             <img :src="staticState.footerImg2" alt="">
         </view>
 
-        <!-- 城市选择 -->
-        <uni-data-picker ref="cityPicker" :localdata="areaState.areaList" :map="{ text: 'name', value: 'id' }"
-            popup-title="请选择" @change="onchange"></uni-data-picker>
-
-
         <!-- 提交订单弹窗 -->
-        <uni-popup ref="popupOpen" type="bottom">
-            <SubmitModal :query="params"></SubmitModal>
-        </uni-popup>
+        <SubmitModal ref="submitModalEle"></SubmitModal>
     </view>
 </template>
 
 <script setup>
 import { getAreaListApi, getAreaFeatureApi, getNumberListApi } from '@/api/index'
 import { reactive, ref, onMounted, watch } from 'vue';
-import SubmitModal from '@/components/submitModal'
+import SubmitModal from '@/components/submitModal';
+import NumberStyle from '@/components/numberStyle';
 import { filterLevel } from '@/utils'
 const staticState = reactive({
     headerImg: new URL('@/static/image/headerImg.jpg', import.meta.url).href,
@@ -98,9 +85,10 @@ const staticState = reactive({
 })
 
 const cityPicker = ref()
-const popupOpen = ref()
+const submitModalEle = ref()
 // 地区
 const areaState = reactive({
+    receivingAddressList: [], // 收货地址
     areaList: [],
     defaultAreaList: [],
     defaultArea: ''
@@ -118,7 +106,7 @@ const params = reactive({
     feature: '',
     keyword: '',
     nofour: false,
-    phone: '',
+    phone: '123444',
     pagesize: 30
 })
 
@@ -128,9 +116,10 @@ const listData = reactive({
 })
 
 // 获取号码地区列表
-const getAreaList = async (level = 2) => {
+const getAreaList = async () => {
     const { data } = await getAreaListApi({ cityId: String(params.cityId) })
-    areaState.areaList = filterLevel(data.lists, level)
+    areaState.areaList = filterLevel(data.lists, 2)
+    areaState.receivingAddressList = filterLevel(data.lists, 3)
     areaState.defaultAreaList = data.lists[data.provinceIndex].children.map(item => {
         return {
             ...item,
@@ -165,7 +154,7 @@ const getNumberList = async (page = 1) => {
     }
     const { data } = await getNumberListApi({ ...dataJson })
     data?.data?.forEach((item) => {
-        item.number = Array.from(item.number).map((n, i) => {
+        item.numberArray = Array.from(item.number).map((n, i) => {
             return {
                 i: n,
                 f: Array.from(item.default_high_light_bits)[i] == 1
@@ -176,14 +165,8 @@ const getNumberList = async (page = 1) => {
     listData.total = data ? data.total : 0
 }
 
-const handleClickArea = () => {
-    cityPicker.value.show()
-    getAreaList()
-}
-
 const handleClick = (item) => {
-    popupOpen.value.open()
-    params.phone = item.number
+    submitModalEle.value.open({ ...item, receivingAddressList: areaState.receivingAddressList })
 }
 
 const handleClickItem = (index) => {
@@ -241,9 +224,10 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 page {
     width: 100%;
+    overflow: hidden;
     background-color: #ad0b1f;
 }
 
