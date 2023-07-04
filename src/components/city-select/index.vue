@@ -20,32 +20,6 @@ const props = defineProps({
     }
 })
 
-const cityPicker = ref({})
-const areaState = reactive({
-    areaList: [],
-    defaultArea: []
-})
-
-// 获取号码地区列表
-const getAreaList = async () => {
-    const { data } = await getAreaListApi({})
-    areaState.areaList = data.lists
-    areaState.defaultArea = data.lists[9].children.map(item => {
-        return {
-            ...item,
-            active: false
-        }
-    })
-    // params.cityId = areaState.defaultArea[0].id
-    getAreaFeature()
-}
-
-const onchange = () => { }
-
-const open = () => {
-
-}
-
 defineExpose({
     open
 })
