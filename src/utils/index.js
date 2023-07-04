@@ -1,0 +1,1 @@
+export const filterLevel = (list, level = 1) => list.map(v => ({ ...v, children: level <= 1 ? [] : filterLevel(v.children, level - 1) }))

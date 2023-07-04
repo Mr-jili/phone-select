@@ -5,7 +5,6 @@ export default {
     console.log('App Launch')
   },
   onShow: function () {
-    console.log(City, 6666)
     console.log('App Show')
   },
   onHide: function () {

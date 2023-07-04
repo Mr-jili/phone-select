@@ -40,10 +40,5 @@ const handleClickItem = (index) => {
 </script>
 
 <style lang="scss">
-page {
-    width: 100%;
-    background-color: #ad0b1f;
-}
 
-@import "./index.scss"
 </style>
