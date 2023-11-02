@@ -74,7 +74,7 @@
         </uni-popup>
 
         <!-- 提交订单弹窗 -->
-        <SubmitModal ref="submitModalEle"></SubmitModal>
+        <SubmitModal ref="submitModalEle" @loadRefresh="getNumberList"></SubmitModal>
     </view>
 </template>
 
@@ -85,6 +85,7 @@ import SubmitModal from '@/components/submitModal';
 import NumberStyle from '@/components/numberStyle';
 import CityPicker from '@/components/cityPicker';
 import { filterLevel } from '@/utils'
+
 const staticState = reactive({
     headerImg: new URL('@/static/image/headerImg.jpg', import.meta.url).href,
     footerImg1: new URL('@/static/image/footerImg1.jpg', import.meta.url).href,
@@ -105,7 +106,6 @@ const topSearchState = reactive({
     list: [],
     isAll: false
 })
-// 287
 // 传参
 const params = reactive({
     provinceId: '', // 省id
@@ -118,6 +118,7 @@ const params = reactive({
     pagesize: 30
 })
 
+// 列表
 const listData = reactive({
     list: [],
     total: 0
@@ -189,10 +190,12 @@ const getNumberList = async (page = 1) => {
     listData.total = data ? data.total : 0
 }
 
+// 领取弹窗
 const handleClick = (item) => {
     submitModalEle.value.open({ ...item, receivingAddressList: areaState.receivingAddressList })
 }
 
+// 地区选择
 const handleClickItem = (index) => {
     areaState.defaultAreaList = areaState.defaultAreaList.map(item => {
         return {
@@ -205,6 +208,7 @@ const handleClickItem = (index) => {
     getAreaFeature()
 }
 
+// 热搜选择
 const handleClickTopItem = (index) => {
     topSearchState.list = topSearchState.list.map(item => {
         return {
@@ -217,11 +221,13 @@ const handleClickTopItem = (index) => {
     getNumberList()
 }
 
+// 不含4
 const handleTopSearchNoFour = () => {
     params.nofour = !params.nofour
     getNumberList()
 }
 
+// 全选
 const handleTopSearch = () => {
     listData.isAll = !listData.isAll
     topSearchState.list = topSearchState.list.map(item => {
@@ -234,13 +240,22 @@ const handleTopSearch = () => {
     getNumberList()
 }
 
+<<<<<<< HEAD
 const onchange = (value) => {
     params.cityId = value.cityId
     params.provinceId = value.provinceId
     cityPickerPopup.value.close()
     getAreaList(true)
+=======
+
+// 地区城市
+const onchange = (event) => {
+    params.cityId = event.detail.value[1]?.value
+    getAreaList()
+>>>>>>> f8e7c315c335fe132bddad77b4d72c39a8e793c4
 }
 
+// 分页
 const onPageChange = ({ current }) => {
     getNumberList(current)
 }
