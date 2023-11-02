@@ -7,13 +7,13 @@
             <view class="home-search-top">
                 <view class="home-search-title">地区</view>
                 <view class="home-search-content">
-                    <uni-data-picker ref="cityPicker" :localdata="areaState.areaList" :map="{ text: 'name', value: 'id' }"
+                    <view :class="['home-search-content-item', 'area']" @click="openCityModal">
+                        {{ areaState.defaultArea }}
+                        <uni-icons type="bottom" size="16"></uni-icons>
+                    </view>
+                    <!-- <uni-data-picker ref="cityPicker" :localdata="areaState.areaList" :map="{ text: 'name', value: 'id' }"
                         popup-title="请选择" @change="onchange">
-                        <view :class="['home-search-content-item', 'area']">
-                            {{ areaState.defaultArea }}
-                            <uni-icons type="bottom" size="16"></uni-icons>
-                        </view>
-                    </uni-data-picker>
+                    </uni-data-picker> -->
                     <view :class="['home-search-content-item', item.active ? 'active' : '']"
                         v-for="(item, index) in areaState.defaultAreaList" :key="item.id" @click="handleClickItem(index)">
                         {{ item.name }}
@@ -67,6 +67,12 @@
             <img :src="staticState.footerImg2" alt="">
         </view>
 
+        <!-- 城市联动弹窗 -->
+        <uni-popup background-color="#fff" ref="cityPickerPopup">
+            <CityPicker :showParams="{ provinceId: params.provinceId, cityId: params.cityId }"
+                :province="areaState.areaList" @change="onchange"></CityPicker>
+        </uni-popup>
+
         <!-- 提交订单弹窗 -->
         <SubmitModal ref="submitModalEle"></SubmitModal>
     </view>
@@ -77,6 +83,7 @@ import { getAreaListApi, getAreaFeatureApi, getNumberListApi } from '@/api/index
 import { reactive, ref, onMounted, watch } from 'vue';
 import SubmitModal from '@/components/submitModal';
 import NumberStyle from '@/components/numberStyle';
+import CityPicker from '@/components/cityPicker';
 import { filterLevel } from '@/utils'
 const staticState = reactive({
     headerImg: new URL('@/static/image/headerImg.jpg', import.meta.url).href,
@@ -84,7 +91,7 @@ const staticState = reactive({
     footerImg2: new URL('@/static/image/footerImg2.jpg', import.meta.url).href,
 })
 
-const cityPicker = ref()
+const cityPickerPopup = ref()
 const submitModalEle = ref()
 // 地区
 const areaState = reactive({
@@ -101,12 +108,13 @@ const topSearchState = reactive({
 // 287
 // 传参
 const params = reactive({
-    cityId: '',
+    provinceId: '', // 省id
+    cityId: '', // 市id
     type: false, // 类型
     feature: '',
     keyword: '',
     nofour: false,
-    phone: '123444',
+    phone: '',
     pagesize: 30
 })
 
@@ -116,7 +124,7 @@ const listData = reactive({
 })
 
 // 获取号码地区列表
-const getAreaList = async () => {
+const getAreaList = async (isSearch = false) => {
     const { data } = await getAreaListApi({ cityId: String(params.cityId) })
     areaState.areaList = filterLevel(data.lists, 2)
     areaState.receivingAddressList = filterLevel(data.lists, 3)
@@ -126,9 +134,25 @@ const getAreaList = async () => {
             active: false
         }
     })
-    areaState.defaultArea = data.lists[data.provinceIndex].name
-    areaState.defaultAreaList[0].active = true
-    params.cityId = areaState.defaultAreaList[0].id
+
+    // 地区搜索后
+    if (isSearch) {
+        const index = areaState.defaultAreaList.findIndex(item => item.id === params.cityId)
+        areaState.defaultAreaList[index].active = true
+        areaState.defaultArea = data.lists.find(item => item.id === params.provinceId)?.name
+    } else {
+        // 初始化
+
+        // 省
+        areaState.defaultArea = data.lists[data.provinceIndex].name
+        params.provinceId = data.lists[data.provinceIndex].id
+
+        // 城
+        const index = areaState.defaultAreaList.findIndex(item => item.id === data.locationCityId)
+        params.cityId = areaState.defaultAreaList[index].id
+        areaState.defaultAreaList[index].active = true
+    }
+
     getAreaFeature()
 }
 
@@ -210,13 +234,19 @@ const handleTopSearch = () => {
     getNumberList()
 }
 
-const onchange = (event) => {
-    params.cityId = event.detail.value[1]?.value
-    getAreaList()
+const onchange = (value) => {
+    params.cityId = value.cityId
+    params.provinceId = value.provinceId
+    cityPickerPopup.value.close()
+    getAreaList(true)
 }
 
 const onPageChange = ({ current }) => {
     getNumberList(current)
+}
+
+const openCityModal = () => {
+    cityPickerPopup.value.open('left')
 }
 
 onMounted(() => {
