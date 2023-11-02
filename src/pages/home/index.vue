@@ -240,19 +240,11 @@ const handleTopSearch = () => {
     getNumberList()
 }
 
-<<<<<<< HEAD
 const onchange = (value) => {
     params.cityId = value.cityId
     params.provinceId = value.provinceId
     cityPickerPopup.value.close()
     getAreaList(true)
-=======
-
-// 地区城市
-const onchange = (event) => {
-    params.cityId = event.detail.value[1]?.value
-    getAreaList()
->>>>>>> f8e7c315c335fe132bddad77b4d72c39a8e793c4
 }
 
 // 分页
