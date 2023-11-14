@@ -40,11 +40,19 @@ const state = reactive({
 const handleProvince = (value) => {
     state.provinceId = value.id
     state.city = value.children
+    state.province.forEach(item => {
+        item.active = false
+    })
+    value.active = true
 }
 
 // 市
 const handleCity = (value) => {
     state.cityId = value.id
+    state.city.forEach(item => {
+        item.active = false
+    })
+    value.active = true
     emit('change', {
         provinceId: state.provinceId,
         cityId: state.cityId
