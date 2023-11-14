@@ -1,9 +1,20 @@
 {
 	"pages": [
+        {
+			"path": "pages/index/index",
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "",
+            "enablePullDownRefresh": false
+		},
 		{
 			"path": "pages/home/index",
             "navigationStyle": "custom",
             "navigationBarTitleText": "首页",
+            "enablePullDownRefresh": false
+		},
+		{
+			"path": "pages/getNumber/index",
+            "navigationBarTitleText": "号码预约",
             "enablePullDownRefresh": false
 		}
 	],
