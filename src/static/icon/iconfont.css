@@ -1,0 +1,33 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 531125 */
+  src: url('./iconfont.ttf') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shoucang:before {
+  content: "\e600";
+}
+
+.icon-zuobiao:before {
+  content: "\e615";
+}
+
+.icon-liantong:before {
+  content: "\e60d";
+}
+
+.icon-wodezuji:before {
+  content: "\e62a";
+}
+
+.icon-icon_change:before {
+  content: "\e656";
+}
+

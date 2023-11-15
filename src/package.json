@@ -1,0 +1,20 @@
+{
+    "id": "ca-code-input",
+    "name": "CaCodeInput 验证码输入框，车牌号输入框",
+    "displayName": "CaCodeInput 验证码输入框，车牌号输入框",
+    "version": "1.0.0",
+    "description": "验证码框、车牌号输入框，可自定义颜色字号，大小，隐秘输入",
+    "keywords": [
+        "code-input",
+        "input",
+        "code",
+        "密码输入框",
+        "验证码输入框"
+    ],
+    "dcloudext": {
+        "category": [
+            "前端组件",
+            "通用组件"
+        ]
+    }
+}

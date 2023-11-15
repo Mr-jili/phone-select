@@ -6,7 +6,7 @@
             "navigationBarTitleText": "",
             "enablePullDownRefresh": false
 		},
-		{
+        {
 			"path": "pages/home/index",
             "navigationStyle": "custom",
             "navigationBarTitleText": "首页",
