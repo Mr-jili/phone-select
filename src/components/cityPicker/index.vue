@@ -85,28 +85,34 @@ onMounted(() => {
 </script>
 <style lang="scss">
 .popup-content {
-    min-width: 560rpx;
-    max-width: 600rpx;
+    width: 468rpx;
     display: flex;
 
     .ul {
-        height: 96vh;
+        height: 100vh;
         overflow-y: auto;
         overflow-x: hidden;
-        padding: 2vh 20rpx;
 
         .li {
-            width: 160rpx;
+            width: 180rpx;
             overflow: hidden;
             padding: 24rpx;
-            color: #333333;
+            color: #666;
             font-size: 30rpx;
             text-align: center;
             cursor: pointer;
+            border-bottom: 1px solid #f4f4f4;
+            // text-overflow: ellipsis;
+            // white-space: nowrap;
         }
 
         .active {
-            color: #fa9d0a;
+            color: #d0663c;
+        }
+
+        &:first-of-type {
+            border-right: 1px solid #efefef;
+            box-shadow: 4px 0 5px -3px #efefef;
         }
     }
 }
