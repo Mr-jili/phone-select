@@ -16,4 +16,5 @@ export default {
 <style>
 /*每个页面公共css */
 @import "@/static/icon/iconfont.css";
+@import '@/static/style/reset.css';
 </style>

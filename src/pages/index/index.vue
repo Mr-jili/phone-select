@@ -1,41 +1,58 @@
 <template>
-    <view class="home">
+    <view class="index">
+        <view class="index-search">
+            <view class="index-search-header">
+                <view class="index-search-header-left" @click="params.searchMode = !params.searchMode">
+                    <text>{{ params.searchMode ? '精确' : '模糊' }}</text>
+                    <uni-icons class="index-search-header-icon" custom-prefix="iconfont" type="icon-icon_change" size="12"
+                        color="#df000f"></uni-icons>
+                </view>
+                <view class="index-search-header-mh_center" v-if="!params.searchMode">
+                    <van-field type="tel" v-model="params.searchNumber" :maxlength="11" placeholder="请输入数字" />
+                    <view class="index-search-header-checked">
+                        <van-checkbox shape="square" icon-size="30rpx" v-model="params.checked">尾号</van-checkbox>
+                    </view>
+                </view>
+                <view class="index-search-header-jq_center" v-else>
+                    <van-password-input :value="params.searchNumber" :length="11" :mask="false"
+                        :focused="params.showKeyboard = true" />
+                </view>
+                <view class="index-search-header-right">
+                    <view class="index-search-header-btn">搜索</view>
+                </view>
 
-        <uni-card>
-            <view>
-                <view>
-                    <text>模糊</text>
-                    <uni-icons custom-prefix="iconfont" type="icon-icon_change" size="10" color="#df000f"></uni-icons>
-                </view>
-                <view>
-                    <input class="uni-input" confirm-type="search" placeholder="请输入数字" />
-                    <view>
-                        <checkbox value="cb" checked="true" />选中
-                    </view>                    
-                </view>
-                <!-- <uni-search-bar radius="20" @confirm="search" :focus="true" v-model="searchValue" @blur="blur" @focus="focus"
-                    @input="input" @cancel="cancel" @clear="clear">
-                    <template v-slot:searchIcon>
-                        <view style="width: 100rpx;">
-                            
-                        </view>
+                <!-- <van-search v-model="value" shape="round" :maxlength="11" :clearable="false" show-action placeholder="请输入数字"
+                    @search="onSearch">
+                    <template #left-icon></template>
+                    <template #right-icon>
+                        <van-checkbox shape="square" icon-size="30rpx" v-model="params.checked">尾号</van-checkbox>
                     </template>
-                    <template v-slot:clearIcon>
-                        <view style="color: #999999">X</view>
+                    <template #label>
+
                     </template>
-                </uni-search-bar> -->
+                    <template #action>
+                        <view class="index-search-btn">搜索</view>
+                    </template>
+                </van-search>
+                <van-dropdown-menu>
+                    <van-dropdown-item v-model="params.serviceProvider" :options="Enum.serviceProvider" />
+                    <van-dropdown-item v-model="params.sort" :options="Enum.defaultSort" />
+                </van-dropdown-menu> -->
             </view>
-        </uni-card>
-
+        </view>
+        <view class="index-content"></view>
         <!-- 城市联动弹窗 -->
         <uni-popup background-color="#fff" ref="cityPickerPopup">
             <CityPicker :showParams="{ provinceId: params.provinceId, cityId: params.cityId }"
                 :province="areaState.areaList" @change="onchange"></CityPicker>
         </uni-popup>
+
+        <van-number-keyboard v-model="params.searchNumber" :show="showKeyboard" @blur="showKeyboard = false" />
     </view>
 </template>
 
 <script setup>
+import * as Enum from './enumParams'
 import {
     getAreaListApi,
     getAreaFeatureApi,
@@ -54,14 +71,28 @@ import {
     filterLevel
 } from '@/utils'
 
-const staticState = reactive({
-    headerImg: new URL('@/static/image/headerImg.jpg', import.meta.url).href,
-    footerImg1: new URL('@/static/image/footerImg1.jpg', import.meta.url).href,
-    footerImg2: new URL('@/static/image/footerImg2.jpg', import.meta.url).href,
+// const cityPickerPopup = ref()
+// const submitModalEle = ref()
+
+const showKeyboard = ref(true);
+
+// 传参
+const params = reactive({
+    checked: false, // 尾号
+    searchMode: false, // false是模糊 true是精确
+    serviceProvider: 0,  // 运营商
+    sort: 0, // 排序
+    searchNumber: '', // 号码
+    // provinceId: '', // 省id
+    // cityId: '', // 市id
+    // type: false, // 类型
+    // feature: '',
+    // keyword: '',
+    // nofour: false,
+    // phone: '',
+    // pagesize: 30
 })
 
-const cityPickerPopup = ref()
-const submitModalEle = ref()
 // 地区
 const areaState = reactive({
     receivingAddressList: [], // 收货地址
@@ -74,17 +105,6 @@ const topSearchState = reactive({
     list: [],
     isAll: false
 })
-// 传参
-const params = reactive({
-    provinceId: '', // 省id
-    cityId: '', // 市id
-    type: false, // 类型
-    feature: '',
-    keyword: '',
-    nofour: false,
-    phone: '',
-    pagesize: 30
-})
 
 // 列表
 const listData = reactive({
@@ -93,57 +113,57 @@ const listData = reactive({
 })
 
 // 获取号码地区列表
-const getAreaList = async (isSearch = false) => {
-    const {
-        data
-    } = await getAreaListApi({
-        cityId: String(params.cityId)
-    })
-    areaState.areaList = filterLevel(data.lists, 2)
-    areaState.receivingAddressList = filterLevel(data.lists, 3)
-    areaState.defaultAreaList = data.lists[data.provinceIndex].children.map(item => {
-        return {
-            ...item,
-            active: false
-        }
-    })
+// const getAreaList = async (isSearch = false) => {
+//     const {
+//         data
+//     } = await getAreaListApi({
+//         cityId: String(params.cityId)
+//     })
+//     areaState.areaList = filterLevel(data.lists, 2)
+//     areaState.receivingAddressList = filterLevel(data.lists, 3)
+//     areaState.defaultAreaList = data.lists[data.provinceIndex].children.map(item => {
+//         return {
+//             ...item,
+//             active: false
+//         }
+//     })
 
-    // 地区搜索后
-    if (isSearch) {
-        const index = areaState.defaultAreaList.findIndex(item => item.id === params.cityId)
-        areaState.defaultAreaList[index].active = true
-        areaState.defaultArea = data.lists.find(item => item.id === params.provinceId)?.name
-    } else {
-        // 初始化
+//     // 地区搜索后
+//     if (isSearch) {
+//         const index = areaState.defaultAreaList.findIndex(item => item.id === params.cityId)
+//         areaState.defaultAreaList[index].active = true
+//         areaState.defaultArea = data.lists.find(item => item.id === params.provinceId)?.name
+//     } else {
+//         // 初始化
 
-        // 省
-        areaState.defaultArea = data.lists[data.provinceIndex].name
-        params.provinceId = data.lists[data.provinceIndex].id
+//         // 省
+//         areaState.defaultArea = data.lists[data.provinceIndex].name
+//         params.provinceId = data.lists[data.provinceIndex].id
 
-        // 城
-        const index = areaState.defaultAreaList.findIndex(item => item.id === data.locationCityId)
-        params.cityId = areaState.defaultAreaList[index].id
-        areaState.defaultAreaList[index].active = true
-    }
+//         // 城
+//         const index = areaState.defaultAreaList.findIndex(item => item.id === data.locationCityId)
+//         params.cityId = areaState.defaultAreaList[index].id
+//         areaState.defaultAreaList[index].active = true
+//     }
 
-    getAreaFeature()
-}
+//     getAreaFeature()
+// }
 
 // 获取指定城市号码规则列表
-const getAreaFeature = async () => {
-    const {
-        data
-    } = await getAreaFeatureApi({
-        cityId: params.cityId
-    })
-    topSearchState.list = data.map(item => {
-        return {
-            name: item,
-            active: false
-        }
-    })
-    getNumberList()
-}
+// const getAreaFeature = async () => {
+//     const {
+//         data
+//     } = await getAreaFeatureApi({
+//         cityId: params.cityId
+//     })
+//     topSearchState.list = data.map(item => {
+//         return {
+//             name: item,
+//             active: false
+//         }
+//     })
+//     getNumberList()
+// }
 
 // 获取号码列表
 const getNumberList = async (page = 1) => {
@@ -242,7 +262,7 @@ const openCityModal = () => {
 }
 
 onMounted(() => {
-    getAreaList()
+    // getAreaList()
 })
 </script>
 
@@ -256,4 +276,14 @@ page {
 }
 
 @import "./index.scss"
+</style>
+
+<style lang="scss">
+.van-password-input {
+    margin: 0 !important;
+}
+
+.van-password-input__security {
+    height: 44px !important;
+}
 </style>
