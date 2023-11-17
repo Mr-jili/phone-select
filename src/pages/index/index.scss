@@ -5,6 +5,7 @@
     box-shadow: 0 0 8rpx 4rpx rgba(0, 0, 0, 0.1);
     margin: 20rpx;
     padding: 20rpx;
+    padding-bottom: 0;
     position: relative;
     z-index: 12;
 
@@ -87,7 +88,7 @@
       &-item {
         text {
           padding: 0 4rpx;
-		  color: #fc3e5a;
+          color: #fc3e5a;
         }
       }
       &-icon {
@@ -98,17 +99,68 @@
         animation-iteration-count: infinite;
         transition-timing-function: ease-in-out;
       }
+      ::v-deep {
+        .van-popup--top {
+          width: calc(100% - 40rpx);
+          margin-left: 20rpx;
+          border-bottom-left-radius: 8rpx;
+          border-bottom-right-radius: 8rpx;
+        }
+        .van-dropdown-menu__bar {
+          box-shadow: none;
+        }
+      }
+    }
+
+    &-bottom {
+      width: 100%;
+      @include flex();
+      align-items: center;
+      justify-content: space-between;
+
+      &-item {
+      }
+
+      &-title {
+        margin-top: 12rpx;
+      }
 
       ::v-deep {
         .van-popup--top {
-			width: calc(100% - 40rpx);
-			margin-left: 20rpx;
-			border-bottom-left-radius: 8rpx;
-			border-bottom-right-radius: 8rpx;
-		}
-		.van-dropdown-menu__bar {
-			box-shadow: none;
-		}
+          top: -1px;
+          border-bottom-left-radius: 8rpx;
+          border-bottom-right-radius: 8rpx;
+        }
+        .van-dropdown-menu {
+          width: 100%;
+        }
+        .van-dropdown-menu__title {
+          background-color: #f2f2f7;
+          height: 66rpx;
+          padding: 0 16rpx;
+          padding-right: 20px;
+          border-radius: 40rpx;
+        }
+        .van-dropdown-menu__title:after {
+          right: 10px;
+        }
+        .van-dropdown-item__content {
+          width: calc(100% - 40rpx);
+          margin-left: 20rpx;
+        }
+        .van-overlay {
+          width: calc(100% - 42rpx);
+          margin-left: 21rpx;
+        }
+        .van-dropdown-menu__title--active {
+          height: 82rpx;
+          margin-top: 12rpx;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        .van-dropdown-menu__bar {
+          box-shadow: none;
+        }
       }
     }
   }

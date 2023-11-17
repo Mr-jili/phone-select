@@ -42,15 +42,15 @@ export const defaultSort = [
 export const deliveryMethod = [
   {
     label: "快递送货",
-    value: 0,
+    value: '0',
   },
   {
     label: "当面过户",
-    value: 1,
+    value: '1',
   },
   {
     label: "客户自取",
-    value: 2,
+    value: '2'
   },
 ];
 
@@ -77,7 +77,7 @@ export const serviceProviderFilter = [
 // 靓号规则
 export const numberSegmentRule = {
   DuiChen: {
-    featureName: "对称号",
+    label: "对称号",
     ruleList: [
       {
         ruleName: "ABCDABCD",
@@ -272,7 +272,7 @@ export const numberSegmentRule = {
     sort: 4,
   },
   BaoZi: {
-    featureName: "豹子号",
+    label: "豹子号",
     ruleList: [
       {
         ruleName: "AAAAAAA",
@@ -556,7 +556,7 @@ export const numberSegmentRule = {
     sort: 1,
   },
   LiangHao: {
-    featureName: "小靓号",
+    label: "小靓号",
     ruleList: [
       {
         ruleName: "老号段",
@@ -729,7 +729,7 @@ export const numberSegmentRule = {
     sort: 5,
   },
   DuiZi: {
-    featureName: "对子号",
+    label: "对子号",
     ruleList: [
       {
         ruleName: "AABBCCDD",
@@ -998,7 +998,7 @@ export const numberSegmentRule = {
     sort: 2,
   },
   ShunZi: {
-    featureName: "顺序号",
+    label: "顺序号",
     ruleList: [
       {
         ruleName: "ABCDEF",
@@ -1192,7 +1192,7 @@ export const numberSegmentRule = {
     sort: 3,
   },
   Other: {
-    featureName: "其他",
+    label: "其他",
     sort: 6,
   },
 };
@@ -1463,5 +1463,49 @@ export const luckyNumber = [
   {
     label: "旭日升天",
     value: "3",
+  },
+];
+
+// 包含数字
+export const bhNum = [
+  {
+    label: "含0多",
+    value: "1",
+  },
+  {
+    label: "含1多",
+    value: "2",
+  },
+  {
+    label: "含2多",
+    value: "3",
+  },
+];
+
+// 不含数字
+export const noBHhNum = [
+  {
+    label: "不含0",
+    value: "1",
+  },
+  {
+    label: "不含1",
+    value: "2",
+  },
+  {
+    label: "不含2",
+    value: "3",
+  },
+  {
+    label: "不含3",
+    value: "4",
+  },
+  {
+    label: "不含4",
+    value: "5",
+  },
+  {
+    label: "不含5",
+    value: "6",
   },
 ];

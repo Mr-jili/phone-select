@@ -9,31 +9,49 @@
         </view>
         <view class="popup-content-cell">
             <view class="popup-content-cell-content">
-                <CustomCell title="配送方式" defaultValue="2" style="border-top-style: none;" :data="Enum.deliveryMethod">
+                <CustomCell title="配送方式" :defaultValue="props.showParams.value1" defineOpen style="border-top-style: none;"
+                    :data="Enum.deliveryMethod" @change="(value) => state.value1 = value">
                 </CustomCell>
-                <CustomCell title="运营商" defaultValue="1" :data="Enum.serviceProviderFilter"></CustomCell>
-                <CustomCell title="号段" defaultValue="1" :data="Enum.sectionList"></CustomCell>
-                <CustomCell title="靓号规则" defaultValue="1" :data="Enum.serviceProviderFilter"></CustomCell>
-                <CustomCell title="价格" defaultValue="1" :data="Enum.priceList"
-                    :option="{ label: 'ruleName', value: 'ruleCode' }"></CustomCell>
-                <CustomCell title="月低消" defaultValue="1" :data="Enum.priceLowCostList"
-                    :option="{ label: 'ruleName', value: 'ruleCode' }"></CustomCell>
-                <CustomCell title="包含数字" defaultValue="1" :data="Enum.priceLowCostList"></CustomCell>
-                <CustomCell title="吉祥数字" defaultValue="1" :data="Enum.luckyNumber"></CustomCell>
+                <CustomCell title="运营商" :defaultValue="props.showParams.value2" :data="Enum.serviceProviderFilter"
+                    @change="(value) => state.value2 = value"></CustomCell>
+                <CustomCell title="号段" :defaultValue="props.showParams.value3" :data="Enum.sectionList"
+                    @change="(value) => state.value3 = value">
+                </CustomCell>
+                <CustomCell title="靓号规则" :defaultValue="props.showParams.value4"
+                    :data="Object.values(Enum.numberSegmentRule)"
+                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList' }"
+                    @change="(value) => state.value4 = value" :showLHRule="true">
+                </CustomCell>
+                <CustomCell title="价格" :defaultValue="props.showParams.value5" :data="Enum.priceList"
+                    :option="{ label: 'ruleName', value: 'priceRange' }" :showInput="true"
+                    @change="(value) => state.value5 = value"></CustomCell>
+                <CustomCell title="月低消" :defaultValue="props.showParams.value6" :data="Enum.priceLowCostList"
+                    :option="{ label: 'ruleName', value: 'priceRange' }" :showInput="true"
+                    @change="(value) => state.value6 = value">
+                </CustomCell>
+                <CustomCell title="包含数字" :defaultValue="props.showParams.value7" :data="Enum.bhNum"
+                    @change="(value) => state.value7 = value">
+                </CustomCell>
+                <CustomCell title="不含数字" :defaultValue="props.showParams.value8" :data="Enum.noBHhNum"
+                    @change="(value) => state.value8 = value">
+                </CustomCell>
+                <CustomCell title="吉祥数字" :defaultValue="props.showParams.value9" :data="Enum.luckyNumber"
+                    @change="(value) => state.value9 = value"></CustomCell>
             </view>
         </view>
         <view class="popup-content-footer">
             <view class="popup-content-footer-wrapper">
-                <view class="foot-btn foot-btn-clear">重置</view>
-                <view class="foot-btn foot-btn-ok">确定</view>
+                <view class="foot-btn foot-btn-clear" @click="handleRest">重置</view>
+                <view class="foot-btn foot-btn-ok" @click="handleFinish">确定</view>
             </view>
         </view>
     </view>
 </template>
 <script setup>
-import { reactive, onMounted, defineProps, defineEmits } from 'vue';
-import CustomCell from '../cell';
+import { reactive, onMounted, defineProps, defineEmits, ref } from 'vue';
+import CustomCell from '../cellFilter';
 import * as Enum from '@/pages/index/enumParams'
+
 const props = defineProps({
     // 数据回显
     showParams: {
@@ -45,12 +63,34 @@ const props = defineProps({
 const emit = defineEmits()
 
 const state = reactive({
-    province: [],
-    city: [],
-    provinceId: '',
-    cityId: ''
+    value1: '',
+    value2: '',
+    value3: '',
+    value4: '',
+    value5: '',
+    value6: '',
+    value7: '',
+    value8: '',
+    value9: '',
+
 })
 
+const handleRest = () => {
+    state.value1 = ''
+    state.value2 = ''
+    state.value3 = ''
+    state.value4 = ''
+    state.value5 = ''
+    state.value6 = ''
+    state.value7 = ''
+    state.value8 = ''
+    state.value9 = ''
+    emit('ok', state)
+}
+
+const handleFinish = () => {
+    emit('ok', state)
+}
 
 onMounted(() => {
 

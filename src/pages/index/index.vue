@@ -1,56 +1,117 @@
 <template>
     <view class="index">
-        <view class="index-search">
-            <view class="index-search-header">
-                <view class="index-search-header-left" @click="onSearchMode">
-                    <text>{{ params.searchMode ? '精确' : '模糊' }}</text>
-                    <uni-icons class="index-search-header-icon" custom-prefix="iconfont" type="icon-icon_change" size="14"
-                        color="#df000f"></uni-icons>
-                </view>
-                <view class="index-search-header-mh_center" v-if="!params.searchMode">
-                    <van-field type="tel" :border="false" :clearable="true" v-model="params.searchNumber" :maxlength="11"
-                        placeholder="请输入数字" />
-                    <view class="index-search-header-checked">
-                        <van-checkbox shape="square" icon-size="30rpx" v-model="params.checked">尾号</van-checkbox>
+        <van-sticky>
+            <view class="index-search">
+                <view class="index-search-header">
+                    <view class="index-search-header-left" @click="onSearchMode">
+                        <text>{{ params.searchMode ? '精确' : '模糊' }}</text>
+                        <uni-icons class="index-search-header-icon" custom-prefix="iconfont" type="icon-icon_change"
+                            size="14" color="#df000f"></uni-icons>
+                    </view>
+                    <view class="index-search-header-mh_center" v-if="!params.searchMode">
+                        <van-field type="tel" :border="false" :clearable="true" v-model="params.searchNumber"
+                            :maxlength="11" placeholder="请输入数字" />
+                        <view class="index-search-header-checked">
+                            <van-checkbox shape="square" icon-size="30rpx" v-model="params.checked">尾号</van-checkbox>
+                        </view>
+                    </view>
+                    <view class="index-search-header-jq_center" v-else>
+                        <van-password-input :value="params.searchNumber" :length="11" :mask="false"
+                            :focused="params.showKeyboard" @focus="params.showKeyboard = true" />
+                    </view>
+                    <view class="index-search-header-right">
+                        <view class="index-search-header-btn">搜索</view>
                     </view>
                 </view>
-                <view class="index-search-header-jq_center" v-else>
-                    <van-password-input :value="params.searchNumber" :length="11" :mask="false"
-                        :focused="params.showKeyboard" @focus="params.showKeyboard = true" />
+                <view class="index-search-center">
+                    <van-dropdown-menu ref="dropMenu">
+                        <van-dropdown-item @open="openCityModal">
+                            <template #title>
+                                <view class="index-search-center-item">
+                                    <uni-icons class="index-search-center-icon" custom-prefix="iconfont" type="icon-zuobiao"
+                                        size="20" color="#ff0000"></uni-icons>
+                                    <text>南京</text>
+                                </view>
+                            </template>
+                        </van-dropdown-item>
+                        <van-dropdown-item v-model="params.serviceProvider" :options="Enum.serviceProvider">
+                            <template #title>
+                                <view>
+                                    {{ params.serviceProvider === 0 ? '运营商' : Enum.serviceProvider.find(item => item.value
+                                        ===
+                                        params.serviceProvider)?.text }}
+                                </view>
+                            </template>
+                        </van-dropdown-item>
+                        <van-dropdown-item v-model="params.sort" :options="Enum.defaultSort" />
+                        <van-dropdown-item @open="onFilterPopup">
+                            <template #title>
+                                筛选{{ filterNum ? `(${filterNum})` : '' }}
+                            </template>
+                        </van-dropdown-item>
+                    </van-dropdown-menu>
                 </view>
-                <view class="index-search-header-right">
-                    <view class="index-search-header-btn">搜索</view>
+                <view class="index-search-bottom">
+                    <van-dropdown-menu>
+                        <van-dropdown-item v-model="value1" :options="option1">
+                            <template #title>
+                                <view class="index-search-bottom-title">不含四</view>
+                            </template>
+                        </van-dropdown-item>
+                        <van-dropdown-item class="active" v-model="value2">
+                            <template #title>
+                                <view class="index-search-bottom-title">靓号规则</view>
+                            </template>
+                            <view style="height: 600rpx;">
+                                <CustomCell title="靓号规则" :defaultValue="params.filterParams"
+                                    :data="Object.values(Enum.numberSegmentRule)"
+                                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList' }"
+                                    @change="(value) => params.filterParams.value4 = value" :showLHRule="true">
+                                </CustomCell>
+                            </view>
+                        </van-dropdown-item>
+                        <van-dropdown-item v-model="value2">
+                            <template #title>
+                                <view class="index-search-bottom-title">售价</view>
+                            </template>
+                            <view style="height: 600rpx;">
+                                <CustomCell title="靓号规则" :defaultValue="params.filterParams"
+                                    :data="Object.values(Enum.numberSegmentRule)"
+                                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList' }"
+                                    @change="(value) => params.filterParams.value4 = value" :showLHRule="true">
+                                </CustomCell>
+                            </view>
+                        </van-dropdown-item>
+                        <van-dropdown-item v-model="value2">
+                            <template #title>
+                                <view class="index-search-bottom-title">月低消</view>
+                            </template>
+                            <view style="height: 600rpx;">
+                                <CustomCell title="靓号规则" :defaultValue="params.filterParams"
+                                    :data="Object.values(Enum.numberSegmentRule)"
+                                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList' }"
+                                    @change="(value) => params.filterParams.value4 = value" :showLHRule="true">
+                                </CustomCell>
+                            </view>
+                        </van-dropdown-item>
+                    </van-dropdown-menu>
+
+
+                    <!-- <view>不含4</view>
+                    <view>
+                        <view @click="lhRuleRef.handleToggle()">
+                            靓号规则
+                            <uni-icons :type="lhRuleRef?.toggle ? 'top' : 'bottom'" size="14"></uni-icons>
+                        </view>
+                    </view>
+                    <view>售价</view>
+                    <view>
+                        月低消
+                    </view> -->
                 </view>
             </view>
-            <view class="index-search-center">
-                <van-dropdown-menu :close-on-click-overlay="false">
-                    <van-dropdown-item @open="openCityModal">
-                        <template #title>
-                            <view class="index-search-center-item">
-                                <uni-icons class="index-search-center-icon" custom-prefix="iconfont" type="icon-zuobiao"
-                                    size="20" color="#ff0000"></uni-icons>
-                                <text>南京</text>
-                                <!-- <uni-icons type="bottom" size="14"></uni-icons> -->
-                            </view>
-                        </template>
-                    </van-dropdown-item>
-                    <van-dropdown-item v-model="params.serviceProvider" :options="Enum.serviceProvider">
-                        <template #title>
-                            <view>
-                                {{ params.serviceProvider === 0 ? '运营商' : Enum.serviceProvider.find(item => item.value ===
-                                    params.serviceProvider)?.text }}
-                            </view>
-                        </template>
-                    </van-dropdown-item>
-                    <van-dropdown-item v-model="params.sort" :options="Enum.defaultSort" />
-                    <van-dropdown-item @open="onFilterPopup">
-                        <template #title>
-                            筛选
-                        </template>
-                    </van-dropdown-item>
-                </van-dropdown-menu>
-            </view>
-        </view>
+        </van-sticky>
+
         <view class="index-content"></view>
         <!-- 城市联动弹窗 -->
         <uni-popup background-color="#fff" ref="cityPickerPopup">
@@ -60,7 +121,9 @@
 
         <!-- 筛选弹窗 -->
         <uni-popup background-color="#fff" ref="filterPopup">
-            <FilterModal :showParams="[]" @change="onchange" @close="filterPopup.close()"></FilterModal>
+            <FilterModal :showParams="params.filterParams" @change="onchange" @ok="handleFilterOK"
+                @close="filterPopup.close(); dropMenu.close()">
+            </FilterModal>
         </uni-popup>
 
         <van-number-keyboard v-model="params.searchNumber" :show="showKeyboard" @blur="showKeyboard = false" />
@@ -80,19 +143,19 @@ import {
     onMounted,
     watch
 } from 'vue';
-import SubmitModal from '@/components/submitModal';
-import NumberStyle from '@/components/numberStyle';
 import CityPicker from '@/components/cityPicker';
 import FilterModal from '@/components/filter-modal';
+import CustomCell from "@/components/cell";
 import {
     filterLevel
 } from '@/utils'
 
 const cityPickerPopup = ref()
 const filterPopup = ref()
-// const submitModalEle = ref()
-
+const dropMenu = ref()
+const lhRuleRef = ref() // 靓号规则
 const showKeyboard = ref(false);
+const filterNum = ref()
 
 // 传参
 const params = reactive({
@@ -103,6 +166,7 @@ const params = reactive({
     searchNumber: '', // 号码
     provinceId: '', // 省id
     cityId: '', // 市id
+    filterParams: {},
     // type: false, // 类型
     // feature: '',
     // keyword: '',
@@ -135,6 +199,14 @@ const onSearchMode = () => {
     params.searchMode = !params.searchMode;
     showKeyboard.value = true
     params.searchNumber = ''
+}
+
+// 筛选数据
+const handleFilterOK = (value) => {
+    filterNum.value = Object.values(value).filter(item => item).length
+    params.filterParams = value
+    filterPopup.value.close()
+    dropMenu.value.close()
 }
 
 // 获取号码地区列表

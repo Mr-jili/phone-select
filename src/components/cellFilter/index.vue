@@ -1,28 +1,41 @@
 <template>
     <view class="cell">
-        <view class="cell-content">
-            <view class="input" v-if="props.showInput">
-                <van-field class="input-value" v-model="state.minPrice" type="number" :clearable="true" placeholder="最低" />
-                <view class="input-line">-</view>
-                <van-field class="input-value" type="number" v-model="state.maxPrice" :clearable="true" placeholder="最高" />
+        <view class="cell-header" @click="handleToggle">
+            <view class="cell-header-title">{{ props.title }}</view>
+            <view class="cell-header-icon">
+                <text class="cell-header-icon-text" v-if="props.title === '运营商'">{{ state.value ? state.value : '不限'
+                }}</text>
+                <text class="cell-header-icon-text" v-else>{{ state.value }}</text>
+                <uni-icons :type="!toggle ? 'right' : 'bottom'" size="14"></uni-icons>
             </view>
-            <view v-if="!showLHRule" :class="['cell-content-item', item.active ? 'active' : '']" v-for="item in optionData"
-                :key="item.value" @click="handleClick(item)">
-                {{ item.label }}
-            </view>
-            <!-- 靓号专用 -->
-            <view v-if="showLHRule">
-                <view class="other" v-for="item in optionData" :key="item.label">
-                    <view class="other-title">{{ item.label }}豹子号</view>
-                    <view class="other-content">
-                        <view :class="['cell-content-item', value.active ? 'active' : '']" v-for="value in item.children"
-                            :key="value.value" @click="handleLHClick(item, value)">
-                            {{ value.label }}
+        </view>
+        <Transition mode="out-in" name="fade">
+            <view class="cell-content" v-if="toggle" key="animate">
+                <view class="input" v-if="props.showInput">
+                    <van-field class="input-value" v-model="state.minPrice" type="number" :clearable="true"
+                        placeholder="最低" />
+                    <view class="input-line">-</view>
+                    <van-field class="input-value" type="number" v-model="state.maxPrice" :clearable="true"
+                        placeholder="最高" />
+                </view>
+                <view v-if="!showLHRule" :class="['cell-content-item', item.active ? 'active' : '']"
+                    v-for="item in optionData" :key="item.value" @click="handleClick(item)">
+                    {{ item.label }}
+                </view>
+                <!-- 靓号专用 -->
+                <view v-if="showLHRule">
+                    <view class="other" v-for="item in optionData" :key="item.label">
+                        <view class="other-title">{{ item.label }}</view>
+                        <view class="other-content">
+                            <view :class="['cell-content-item', value.active ? 'active' : '']"
+                                v-for="value in item.children" :key="value.value" @click="handleLHClick(item, value)">
+                                {{ value.label }}
+                            </view>
                         </view>
                     </view>
                 </view>
             </view>
-        </view>
+        </Transition>
     </view>
 </template>
 <script setup>
@@ -153,25 +166,34 @@ onMounted(() => {
         return item
     })
 })
-
-defineExpose({
-    handleToggle,
-    toggle
-})
 </script>
+<!-- <style>
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0.5;
+}
+
+.v-enter-to,
+.v-leave-from {
+    opacity: 1;
+}
+</style> -->
 <style lang="scss" scoped>
 .cell {
-    background-color: #f2f2f7;
-    padding: 10rpx;
-    // border-color: hsla(0, 0%, 59%, .1);
-    // border-top-style: solid;
-    // border-width: 1px;
+    border-color: hsla(0, 0%, 59%, .1);
+    border-top-style: solid;
+    border-width: 1px;
 
     &-header {
         @include flex();
-        // align-items: center;
-        // justify-content: space-between;
-        // height: 100rpx;
+        align-items: center;
+        justify-content: space-between;
+        height: 100rpx;
 
         &-title {
             color: #333;
