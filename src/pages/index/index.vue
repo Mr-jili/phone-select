@@ -52,7 +52,7 @@
                     </van-dropdown-menu>
                 </view>
                 <view class="index-search-bottom">
-                    <van-dropdown-menu>
+                    <van-dropdown-menu ref="dropdownMenuRef">
                         <van-dropdown-item v-model="value1" :options="option1">
                             <template #title>
                                 <view class="index-search-bottom-title">不含四</view>
@@ -60,59 +60,62 @@
                         </van-dropdown-item>
                         <van-dropdown-item class="active" v-model="value2">
                             <template #title>
-                                <view class="index-search-bottom-title">靓号规则</view>
+                                <view class="index-search-bottom-title">{{ params.filterParams.value4?.label ?
+                                    params.filterParams.value4?.label : '靓号规则' }}</view>
                             </template>
-                            <view style="height: 600rpx;">
-                                <CustomCell title="靓号规则" :defaultValue="params.filterParams"
+                            <view style="maxHeight: 600rpx;">
+                                <CustomCell :defaultValue="params.filterParams.value4?.value"
                                     :data="Object.values(Enum.numberSegmentRule)"
-                                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList' }"
-                                    @change="(value) => params.filterParams.value4 = value" :showLHRule="true">
+                                    :option="{ label: 'ruleName', children: 'ruleList', value: 'ruleCode' }"
+                                    @change="onCellChange($event, 'value4')" :showLHRule="true">
                                 </CustomCell>
                             </view>
                         </van-dropdown-item>
                         <van-dropdown-item v-model="value2">
                             <template #title>
-                                <view class="index-search-bottom-title">售价</view>
+                                <view class="index-search-bottom-title">{{ params.filterParams.value5?.label ?
+                                    params.filterParams.value5?.label : '售价' }}</view>
                             </template>
-                            <view style="height: 600rpx;">
-                                <CustomCell title="靓号规则" :defaultValue="params.filterParams"
-                                    :data="Object.values(Enum.numberSegmentRule)"
-                                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList' }"
-                                    @change="(value) => params.filterParams.value4 = value" :showLHRule="true">
+                            <view style="maxHeight: 600rpx;">
+                                <CustomCell :defaultValue="params.filterParams.value5?.value" :data="Enum.priceList"
+                                    :option="{ label: 'ruleName', value: 'priceRange' }"
+                                    @change="onCellChange($event, 'value5')" :showInput="true">
                                 </CustomCell>
                             </view>
                         </van-dropdown-item>
                         <van-dropdown-item v-model="value2">
                             <template #title>
-                                <view class="index-search-bottom-title">月低消</view>
+                                <view class="index-search-bottom-title">{{ params.filterParams.value6?.label ?
+                                    params.filterParams.value6?.label : '月低消' }}</view>
                             </template>
-                            <view style="height: 600rpx;">
-                                <CustomCell title="靓号规则" :defaultValue="params.filterParams"
-                                    :data="Object.values(Enum.numberSegmentRule)"
-                                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList' }"
-                                    @change="(value) => params.filterParams.value4 = value" :showLHRule="true">
+                            <view style="maxHeight: 600rpx;">
+                                <CustomCell :defaultValue="params.filterParams.value6?.value" :data="Enum.priceLowCostList"
+                                    :option="{ label: 'ruleName', value: 'priceRange' }"
+                                    @change="onCellChange($event, 'value6')" :showInput="true">
                                 </CustomCell>
                             </view>
                         </van-dropdown-item>
                     </van-dropdown-menu>
-
-
-                    <!-- <view>不含4</view>
-                    <view>
-                        <view @click="lhRuleRef.handleToggle()">
-                            靓号规则
-                            <uni-icons :type="lhRuleRef?.toggle ? 'top' : 'bottom'" size="14"></uni-icons>
-                        </view>
-                    </view>
-                    <view>售价</view>
-                    <view>
-                        月低消
-                    </view> -->
                 </view>
             </view>
         </van-sticky>
 
-        <view class="index-content"></view>
+        <view class="index-content">
+            <uni-row :gutter="10" style="padding: 10px 10px 0 10px" v-if="listData.list.length > 0">
+                <uni-col :span="12" v-for="item in listData.list" :key="item.number" @click="handleClick(item)">
+                    <view class="home-list-item">
+                        <view class="home-list-item-top">
+                            <number-style :list="item.numberArray"></number-style>
+                            <text class="home-list-item-top-area">{{ item.province }}</text>
+                        </view>
+                        <view class="home-list-item-bottom">
+                            <text class="home-list-item-bottom-price">￥{{ item.sold }}</text>
+                            <text class="home-list-item-bottom-info">限时出售</text>
+                        </view>
+                    </view>
+                </uni-col>
+            </uni-row>
+        </view>
         <!-- 城市联动弹窗 -->
         <uni-popup background-color="#fff" ref="cityPickerPopup">
             <CityPicker :showParams="{ provinceId: params.provinceId, cityId: params.cityId }"
@@ -153,7 +156,7 @@ import {
 const cityPickerPopup = ref()
 const filterPopup = ref()
 const dropMenu = ref()
-const lhRuleRef = ref() // 靓号规则
+const dropdownMenuRef = ref()
 const showKeyboard = ref(false);
 const filterNum = ref()
 
@@ -167,6 +170,7 @@ const params = reactive({
     provinceId: '', // 省id
     cityId: '', // 市id
     filterParams: {},
+
     // type: false, // 类型
     // feature: '',
     // keyword: '',
@@ -203,10 +207,16 @@ const onSearchMode = () => {
 
 // 筛选数据
 const handleFilterOK = (value) => {
-    filterNum.value = Object.values(value).filter(item => item).length
+    filterNum.value = Object.values(value).filter(item => item.value).length
+    console.log('value', value)
     params.filterParams = value
     filterPopup.value.close()
     dropMenu.value.close()
+}
+
+const onCellChange = (value, type) => {
+    params.filterParams[type] = value;
+    dropdownMenuRef.value.close()
 }
 
 // 获取号码地区列表
@@ -244,7 +254,6 @@ const getAreaList = async (isSearch = false) => {
     }
 }
 
-
 // 获取号码列表
 const getNumberList = async (page = 1) => {
     const dataJson = {
@@ -269,59 +278,6 @@ const getNumberList = async (page = 1) => {
     listData.list = data ? data.data : []
     listData.total = data ? data.total : 0
 }
-
-// 领取弹窗
-// const handleClick = (item) => {
-//     submitModalEle.value.open({
-//         ...item,
-//         receivingAddressList: areaState.receivingAddressList
-//     })
-// }
-
-// 地区选择
-// const handleClickItem = (index) => {
-//     areaState.defaultAreaList = areaState.defaultAreaList.map(item => {
-//         return {
-//             ...item,
-//             active: false
-//         }
-//     })
-//     areaState.defaultAreaList[index].active = true
-//     params.cityId = areaState.defaultAreaList[index].id
-//     getAreaFeature()
-// }
-
-// 热搜选择
-// const handleClickTopItem = (index) => {
-//     topSearchState.list = topSearchState.list.map(item => {
-//         return {
-//             ...item,
-//             active: false
-//         }
-//     })
-//     topSearchState.list[index].active = true
-//     params.feature = topSearchState.list[index].name
-//     getNumberList()
-// }
-
-// 不含4
-// const handleTopSearchNoFour = () => {
-//     params.nofour = !params.nofour
-//     getNumberList()
-// }
-
-// 全选
-// const handleTopSearch = () => {
-//     listData.isAll = !listData.isAll
-//     topSearchState.list = topSearchState.list.map(item => {
-//         return {
-//             ...item,
-//             active: false
-//         }
-//     })
-//     params.feature = ''
-//     getNumberList()
-// }
 
 const onchange = (value) => {
     params.cityId = value.cityId

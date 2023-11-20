@@ -1,19 +1,33 @@
 <template>
     <view class="cell">
         <view class="cell-content">
-            <view class="input" v-if="props.showInput">
-                <van-field class="input-value" v-model="state.minPrice" type="number" :clearable="true" placeholder="最低" />
-                <view class="input-line">-</view>
-                <van-field class="input-value" type="number" v-model="state.maxPrice" :clearable="true" placeholder="最高" />
+            <view class="search" v-if="props.showInput">
+                <view class="search-input">
+                    <van-field class="search-input-value" v-model="state.minPrice" type="number" :clearable="true"
+                        placeholder="最低" />
+                    <view class="search-input-line">-</view>
+                    <van-field class="search-input-value" type="number" v-model="state.maxPrice" :clearable="true"
+                        placeholder="最高" />
+                </view>
+                <view class="search-footer" v-if="props.showInput">
+                    <view class="search-footer-wrapper">
+                        <view class="foot-btn foot-btn-clear" @click="handleRest">重置</view>
+                        <view class="foot-btn foot-btn-ok" @click="handleFinish">确定</view>
+                    </view>
+                </view>
             </view>
-            <view v-if="!showLHRule" :class="['cell-content-item', item.active ? 'active' : '']" v-for="item in optionData"
-                :key="item.value" @click="handleClick(item)">
-                {{ item.label }}
-            </view>
+
             <!-- 靓号专用 -->
             <view v-if="showLHRule">
+                <van-checkbox shape="square" icon-size="30rpx" v-model="filterChecked">
+                    <view class="cell-rule">
+                        <text>包含0元号码的规则（带有</text>
+                        <text class="cell-rule-high">免</text>
+                        <text>标识）</text>
+                    </view>
+                </van-checkbox>
                 <view class="other" v-for="item in optionData" :key="item.label">
-                    <view class="other-title">{{ item.label }}豹子号</view>
+                    <view class="other-title">{{ item.label }}</view>
                     <view class="other-content">
                         <view :class="['cell-content-item', value.active ? 'active' : '']" v-for="value in item.children"
                             :key="value.value" @click="handleLHClick(item, value)">
@@ -21,6 +35,12 @@
                         </view>
                     </view>
                 </view>
+            </view>
+
+            <!-- 其他 -->
+            <view v-else :class="['cell-content-item', item.active ? 'active' : '']" v-for="item in optionData"
+                :key="item.value" @click="handleClick(item)">
+                {{ item.label }}
             </view>
         </view>
     </view>
@@ -51,6 +71,7 @@ const props = defineProps({
             value: 'value'
         }
     },
+    // 售价、月低消
     showInput: {
         type: Boolean,
         default: false,
@@ -60,16 +81,12 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    // 数据回显
-    showParams: {
-        type: Object,
-        default: () => { }
-    }
 })
 
 const emit = defineEmits()
 const optionData = ref()
 const toggle = ref(props.defineOpen)
+const filterChecked = ref('') // 筛选靓号规则
 const state = reactive({
     value: '',
     minPrice: '',
@@ -99,8 +116,14 @@ const handleClick = (value) => {
         state.minPrice = splitPrice[0]
         state.maxPrice = splitPrice[1]
     }
-    state.value = value.active ? value.label : ''
-    emit('change', value.value)
+
+    if (value.active) {
+        state.value = value.label
+        emit('change', value)
+    } else {
+        state.value = ''
+        emit('change', {})
+    }
 }
 
 // 靓号规则单独处理
@@ -121,8 +144,12 @@ const handleLHClick = (value, childValue) => {
         }
         return item
     })
-    state.value = childValue.active ? childValue.label : ''
-    emit('change', childValue.value)
+    if (childValue.active) {
+        state.value = childValue.label
+        emit('change', childValue)
+    } else {
+        emit('change', {})
+    }
 }
 
 onMounted(() => {
@@ -133,21 +160,25 @@ onMounted(() => {
             if (item.children && item.children.length > 0) {
                 item.children.forEach(child => {
                     child.active = false
+                    child.label = child[props.option.label]
+                    child.value = child[props.option.value]
+
                     if (child.value == props.defaultValue) {
                         child.active = true
                         state.value = child.label
                     }
-                    child.label = child[props.option.label]
-                    child.value = child[props.option.value]
                 })
             }
         } else {
             item.active = false
+
+            item.value = item[props.option.value] ?? ''
+
             if (item.value == props.defaultValue) {
                 item.active = true
                 state.value = item.label
             }
-            item.value = item[props.option.value]
+
         }
         item.label = item[props.option.label]
         return item
@@ -162,10 +193,7 @@ defineExpose({
 <style lang="scss" scoped>
 .cell {
     background-color: #f2f2f7;
-    padding: 10rpx;
-    // border-color: hsla(0, 0%, 59%, .1);
-    // border-top-style: solid;
-    // border-width: 1px;
+    padding: 32rpx 20rpx;
 
     &-header {
         @include flex();
@@ -223,23 +251,22 @@ defineExpose({
         }
     }
 
-    .input {
+    &-rule {
         @include flex();
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20rpx;
+        margin: 20rpx 0 20rpx 0;
 
-        &-value {
-            border: 1px solid #f2f2f2;
-            color: #606060;
-            flex: 1;
-            border-radius: 4px;
-            height: 70rpx;
+        &-high {
+            background: #ff6363;
+            border-radius: 25rpx 25rpx 25rpx 0;
+            color: #fff;
+            display: inline-block;
             font-size: 32rpx;
-        }
-
-        &-line {
-            padding: 0 20rpx;
+            height: 40rpx;
+            line-height: 40rpx;
+            text-align: center;
+            width: 50rpx;
+            margin: 0 4rpx;
         }
     }
 
@@ -254,6 +281,71 @@ defineExpose({
             @include flex();
             flex-wrap: wrap;
             justify-content: space-between;
+        }
+    }
+
+    .search {
+        @include flex();
+        align-items: center;
+        justify-content: space-between;
+
+        &-input {
+            flex: 1;
+            @include flex();
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20rpx;
+
+            &-value {
+                border: 1px solid #f2f2f2;
+                color: #606060;
+                flex: 1;
+                border-radius: 4px;
+                height: 70rpx;
+                font-size: 32rpx;
+            }
+
+            &-line {
+                padding: 0 20rpx;
+            }
+        }
+
+        &-footer {
+            @include flex();
+            align-items: center;
+
+            &-wrapper {
+                @include flex();
+                align-items: center;
+                justify-content: center;
+                background: #e4393c;
+                border: 1px solid #e4393c;
+                border-radius: 24px;
+                margin: 20rpx 30rpx;
+            }
+
+            .foot-btn {
+                display: block;
+                font-size: 34rpx;
+                height: 30px;
+                line-height: 30px;
+                text-align: center;
+                width: 80rpx;
+            }
+
+            .foot-btn-clear {
+                background-color: #fff;
+                border-radius: 24px 0 24px 24px;
+                color: #e4393c;
+                text-decoration: underline;
+
+            }
+
+            .foot-btn-ok {
+                background-color: #e4393c;
+                border-radius: 0 24px 24px 0;
+                color: #fff;
+            }
         }
     }
 }
