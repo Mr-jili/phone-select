@@ -77,7 +77,7 @@ export const serviceProviderFilter = [
 // 靓号规则
 export const numberSegmentRule = {
   DuiChen: {
-    label: "对称号",
+    ruleName: "对称号",
     ruleList: [
       {
         ruleName: "ABCDABCD",
@@ -272,7 +272,7 @@ export const numberSegmentRule = {
     sort: 4,
   },
   BaoZi: {
-    label: "豹子号",
+    ruleName: "豹子号",
     ruleList: [
       {
         ruleName: "AAAAAAA",
@@ -556,7 +556,7 @@ export const numberSegmentRule = {
     sort: 1,
   },
   LiangHao: {
-    label: "小靓号",
+    ruleName: "小靓号",
     ruleList: [
       {
         ruleName: "老号段",
@@ -729,7 +729,7 @@ export const numberSegmentRule = {
     sort: 5,
   },
   DuiZi: {
-    label: "对子号",
+    ruleName: "对子号",
     ruleList: [
       {
         ruleName: "AABBCCDD",
@@ -998,7 +998,7 @@ export const numberSegmentRule = {
     sort: 2,
   },
   ShunZi: {
-    label: "顺序号",
+    ruleName: "顺序号",
     ruleList: [
       {
         ruleName: "ABCDEF",
@@ -1192,7 +1192,7 @@ export const numberSegmentRule = {
     sort: 3,
   },
   Other: {
-    label: "其他",
+    ruleName: "其他",
     sort: 6,
   },
 };

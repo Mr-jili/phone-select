@@ -39,7 +39,7 @@
     </view>
 </template>
 <script setup>
-import { reactive, onMounted, defineProps, defineExpose, defineEmits, ref, Transition } from 'vue';
+import { reactive, onMounted, defineProps, defineEmits, ref, Transition } from 'vue';
 const props = defineProps({
     data: {
         type: Array,
@@ -53,10 +53,12 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    // 默认是否打开
     defineOpen: {
         type: Boolean,
         default: false
     },
+    // 序列化数据字段
     option: {
         type: Object,
         default: {
@@ -64,6 +66,7 @@ const props = defineProps({
             value: 'value'
         }
     },
+    // 售价、月低消
     showInput: {
         type: Boolean,
         default: false,
@@ -73,11 +76,6 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    // 数据回显
-    showParams: {
-        type: Object,
-        default: () => { }
-    }
 })
 
 const emit = defineEmits()
@@ -112,8 +110,13 @@ const handleClick = (value) => {
         state.minPrice = splitPrice[0]
         state.maxPrice = splitPrice[1]
     }
-    state.value = value.active ? value.label : ''
-    emit('change', value.value)
+    if (value.active) {
+        state.value = value.label
+        emit('change', value)
+    } else {
+        state.value = ''
+        emit('change', {})
+    }
 }
 
 // 靓号规则单独处理
@@ -134,8 +137,13 @@ const handleLHClick = (value, childValue) => {
         }
         return item
     })
-    state.value = childValue.active ? childValue.label : ''
-    emit('change', childValue.value)
+    if (childValue.active) {
+        state.value = childValue.label
+        emit('change', childValue)
+    } else {
+        state.value = ''
+        emit('change', {})
+    }
 }
 
 onMounted(() => {

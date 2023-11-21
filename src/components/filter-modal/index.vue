@@ -9,33 +9,33 @@
         </view>
         <view class="popup-content-cell">
             <view class="popup-content-cell-content">
-                <CustomCell title="配送方式" :defaultValue="props.showParams.value1" defineOpen style="border-top-style: none;"
+                <CustomCell title="配送方式" :defaultValue="props.showParams.value1?.value" defineOpen style="border-top-style: none;"
                     :data="Enum.deliveryMethod" @change="(value) => state.value1 = value">
                 </CustomCell>
-                <CustomCell title="运营商" :defaultValue="props.showParams.value2" :data="Enum.serviceProviderFilter"
+                <CustomCell title="运营商" :defaultValue="props.showParams.value2?.value" :data="Enum.serviceProviderFilter"
                     @change="(value) => state.value2 = value"></CustomCell>
-                <CustomCell title="号段" :defaultValue="props.showParams.value3" :data="Enum.sectionList"
+                <CustomCell title="号段" :defaultValue="props.showParams.value3?.value" :data="Enum.sectionList"
                     @change="(value) => state.value3 = value">
                 </CustomCell>
-                <CustomCell title="靓号规则" :defaultValue="props.showParams.value4"
+                <CustomCell title="靓号规则" :defaultValue="props.showParams.value4?.value"
                     :data="Object.values(Enum.numberSegmentRule)"
-                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList' }"
+                    :option="{ label: 'ruleName', value: 'ruleCode', children: 'ruleList'}"
                     @change="(value) => state.value4 = value" :showLHRule="true">
                 </CustomCell>
-                <CustomCell title="价格" :defaultValue="props.showParams.value5" :data="Enum.priceList"
+                <CustomCell title="价格" :defaultValue="props.showParams.value5?.value" :data="Enum.priceList"
                     :option="{ label: 'ruleName', value: 'priceRange' }" :showInput="true"
                     @change="(value) => state.value5 = value"></CustomCell>
-                <CustomCell title="月低消" :defaultValue="props.showParams.value6" :data="Enum.priceLowCostList"
+                <CustomCell title="月低消" :defaultValue="props.showParams.value6?.value" :data="Enum.priceLowCostList"
                     :option="{ label: 'ruleName', value: 'priceRange' }" :showInput="true"
                     @change="(value) => state.value6 = value">
                 </CustomCell>
-                <CustomCell title="包含数字" :defaultValue="props.showParams.value7" :data="Enum.bhNum"
+                <CustomCell title="包含数字" :defaultValue="props.showParams.value7?.value" :data="Enum.bhNum"
                     @change="(value) => state.value7 = value">
                 </CustomCell>
-                <CustomCell title="不含数字" :defaultValue="props.showParams.value8" :data="Enum.noBHhNum"
+                <CustomCell title="不含数字" :defaultValue="props.showParams.value8?.value" :data="Enum.noBHhNum"
                     @change="(value) => state.value8 = value">
                 </CustomCell>
-                <CustomCell title="吉祥数字" :defaultValue="props.showParams.value9" :data="Enum.luckyNumber"
+                <CustomCell title="吉祥数字" :defaultValue="props.showParams.value9?.value" :data="Enum.luckyNumber"
                     @change="(value) => state.value9 = value"></CustomCell>
             </view>
         </view>
@@ -63,28 +63,27 @@ const props = defineProps({
 const emit = defineEmits()
 
 const state = reactive({
-    value1: '',
-    value2: '',
-    value3: '',
-    value4: '',
-    value5: '',
-    value6: '',
-    value7: '',
-    value8: '',
-    value9: '',
-
+    value1: {},
+    value2: {},
+    value3: {},
+    value4: {},
+    value5: {},
+    value6: {},
+    value7: {},
+    value8: {},
+    value9: {},
 })
 
 const handleRest = () => {
-    state.value1 = ''
-    state.value2 = ''
-    state.value3 = ''
-    state.value4 = ''
-    state.value5 = ''
-    state.value6 = ''
-    state.value7 = ''
-    state.value8 = ''
-    state.value9 = ''
+    state.value1 = {}
+    state.value2 = {}
+    state.value3 = {}
+    state.value4 = {}
+    state.value5 = {}
+    state.value6 = {}
+    state.value7 = {}
+    state.value8 = {}
+    state.value9 = {}
     emit('ok', state)
 }
 
