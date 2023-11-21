@@ -4,8 +4,8 @@
     border-radius: 8rpx;
     box-shadow: 0 0 8rpx 4rpx rgba(0, 0, 0, 0.1);
     margin: 20rpx;
-    padding: 20rpx;
-    padding-bottom: 0;
+    padding: 20rpx 0;
+    padding-bottom: 5rpx;
     position: relative;
     z-index: 12;
 
@@ -13,6 +13,7 @@
       @include flex();
       align-items: center;
       height: 80rpx;
+      margin: 0 20rpx;
 
       &-left {
         @include flex();
@@ -25,7 +26,6 @@
         font-size: 30rpx;
         border-top-left-radius: 24px;
         border-bottom-left-radius: 24px;
-        box-sizing: border-box;
       }
 
       &-icon {
@@ -45,13 +45,12 @@
         border-top: 1px solid #aaa;
         border-bottom: 1px solid #aaa;
         font-size: 32rpx;
-        box-sizing: border-box;
 
         ::v-deep {
           .van-cell {
             padding: 0 20rpx;
-            font-size: 16px;
-            line-height: 40px;
+            font-size: 32rpx;
+            line-height: 80rpx;
           }
           .van-cell__value {
             font-size: 32rpx;
@@ -68,12 +67,21 @@
         border-top: 1px solid #aaa;
         border-bottom: 1px solid #aaa;
         font-size: 32rpx;
-        box-sizing: border-box;
+
+        ::v-deep {
+          .van-password-input {
+            margin: 0 !important;
+          }
+          .van-password-input__security {
+            height: 80rpx;
+          }
+        }
       }
 
       &-btn {
         width: 100rpx;
-        line-height: 80rpx;
+        height: 84rpx;
+        line-height: 84rpx;
         text-align: center;
         background-color: #ff3333;
         font-size: 32rpx;
@@ -86,11 +94,17 @@
     &-center {
       margin-top: 20rpx;
       &-item {
-        text {
-          padding: 0 4rpx;
-          color: #fc3e5a;
-        }
+        @include flex();
+        align-items: center;
       }
+
+      &-title {
+        width: 100rpx;
+        text-align: center;
+        // @include ellipsis();
+        color: #fc3e5a;
+      }
+
       &-icon {
         display: inline-flex;
         vertical-align: bottom;
@@ -113,12 +127,51 @@
     }
 
     &-bottom {
-      width: 100%;
-      @include flex();
-      align-items: center;
-      justify-content: space-between;
+      position: relative;
+
+      &-list {
+        @include flex();
+        margin: 0 20rpx;
+        align-items: center;
+        overflow: hidden;
+        overflow-x: auto;
+      }
 
       &-item {
+        @include flex();
+        align-items: center;
+        margin: 0 16rpx;
+        margin-bottom: 12rpx;
+        padding: 0 20rpx;
+        height: 66rpx;
+        line-height: 66rpx;
+        border-radius: 32rpx;
+        color: #787878;
+        background-color: #f2f2f7;
+        text:first-of-type {
+          white-space: nowrap;
+          padding-right: 4rpx;
+        }
+
+        &:first-of-type {
+          margin-left: 0;
+        }
+
+        &:last-of-type {
+          margin-right: 0;
+        }
+      }
+
+      &-modal {
+        max-height: 600rpx;
+        overflow-y: auto;
+      }
+
+      .active {
+        margin-bottom: 0;
+        padding-bottom: 20rpx;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
       }
 
       &-title {
@@ -140,6 +193,7 @@
           padding: 0 16rpx;
           padding-right: 20px;
           border-radius: 40rpx;
+          color: #787878;
         }
         .van-dropdown-menu__title:after {
           right: 10px;

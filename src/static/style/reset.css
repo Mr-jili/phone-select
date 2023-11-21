@@ -6,3 +6,6 @@
 }
 
 
+#scroll-wrapper::-webkit-scrollbar {
+    display: none !important;
+}
