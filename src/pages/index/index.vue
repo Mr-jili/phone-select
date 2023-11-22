@@ -30,72 +30,93 @@
                                 <view class="index-search-center-item">
                                     <uni-icons class="index-search-center-icon" custom-prefix="iconfont" type="icon-zuobiao"
                                         size="20" color="#ff0000"></uni-icons>
-                                    <text>南京</text>
+                                    <view class="index-search-center-title">{{ areaState.defaultArea }}</view>
                                 </view>
                             </template>
                         </van-dropdown-item>
                         <van-dropdown-item v-model="params.serviceProvider" :options="Enum.serviceProvider">
                             <template #title>
-                                <view>
+                                <view :style="{ color: params.serviceProvider === 0 ? '#787878' : '#fc3e5a' }">
                                     {{ params.serviceProvider === 0 ? '运营商' : Enum.serviceProvider.find(item => item.value
-                                        ===
-                                        params.serviceProvider)?.text }}
+                                        === params.serviceProvider)?.text }}
                                 </view>
                             </template>
                         </van-dropdown-item>
-                        <van-dropdown-item v-model="params.sort" :options="Enum.defaultSort" />
+                        <van-dropdown-item v-model="params.sort" :options="Enum.defaultSort">
+                            <template #title>
+                                <view :style="{ color: params.sort === 1 ? '#787878' : '#fc3e5a' }">
+                                    {{ Enum.defaultSort.find(item => item.value === params.sort)?.text }}
+                                </view>
+                            </template>
+                        </van-dropdown-item>
                         <van-dropdown-item @open="onFilterPopup">
                             <template #title>
-                                筛选{{ filterNum ? `(${filterNum})` : '' }}
+                                <text :style="{ color: !filterNum ? '#787878' : '#fc3e5a' }">筛选{{ filterNum ?
+                                    `(${filterNum})`
+                                    : '' }}</text>
                             </template>
                         </van-dropdown-item>
                     </van-dropdown-menu>
                 </view>
                 <view class="index-search-bottom">
-                    <van-dropdown-menu ref="dropdownMenuRef">
-                        <van-dropdown-item v-model="value1" :options="option1">
-                            <template #title>
-                                <view class="index-search-bottom-title">不含四</view>
-                            </template>
-                        </van-dropdown-item>
-                        <van-dropdown-item class="active" v-model="value2">
-                            <template #title>
-                                <view class="index-search-bottom-title">{{ params.filterParams.value4?.label ?
-                                    params.filterParams.value4?.label : '靓号规则' }}</view>
-                            </template>
-                            <view style="maxHeight: 600rpx;">
-                                <CustomCell :defaultValue="params.filterParams.value4?.value"
-                                    :data="Object.values(Enum.numberSegmentRule)"
-                                    :option="{ label: 'ruleName', children: 'ruleList', value: 'ruleCode' }"
-                                    @change="onCellChange($event, 'value4')" :showLHRule="true">
-                                </CustomCell>
+                    <view class="index-search-bottom-list" id="scroll-wrapper">
+                        <!-- <view :class="['index-search-bottom-item', params.filterParams.value4?.value == 4 ? 'active' : '']"
+                            @click="handleNoFour">
+                            <text>不含四</text>
+                        </view> -->
+
+                        <!-- <view class="index-search-bottom-item" :style="customNoFourStyle()" @click="handleNoFour">
+                            <text>不含四</text>
+                        </view> -->
+                        <template v-for="item in searchBottomList">
+                            <view v-if="item.isClick" :class="['index-search-bottom-item']" :key="item.label"
+                                :style="customNoFourStyle()" @click="handleSearch(item)">
+                                <text>{{ item.label }}</text>
                             </view>
-                        </van-dropdown-item>
-                        <van-dropdown-item v-model="value2">
-                            <template #title>
-                                <view class="index-search-bottom-title">{{ params.filterParams.value5?.label ?
-                                    params.filterParams.value5?.label : '售价' }}</view>
-                            </template>
-                            <view style="maxHeight: 600rpx;">
-                                <CustomCell :defaultValue="params.filterParams.value5?.value" :data="Enum.priceList"
-                                    :option="{ label: 'ruleName', value: 'priceRange' }"
-                                    @change="onCellChange($event, 'value5')" :showInput="true">
-                                </CustomCell>
+                            <view v-else
+                                :class="['index-search-bottom-item', showContent === item.type && showActive ? 'active' : '']"
+                                @click="handleSearch(item)" :style="customStyle(params.filterParams[item.value]?.label)">
+                                <text>{{ params.filterParams[item.value]?.label || item.label }}</text>
+                                <uni-icons :type="showContent === item.type && showActive ? 'top' : 'bottom'"
+                                    :color="customStyle(params.filterParams[item.value]?.label)" size="14"></uni-icons>
                             </view>
-                        </van-dropdown-item>
-                        <van-dropdown-item v-model="value2">
-                            <template #title>
-                                <view class="index-search-bottom-title">{{ params.filterParams.value6?.label ?
-                                    params.filterParams.value6?.label : '月低消' }}</view>
-                            </template>
-                            <view style="maxHeight: 600rpx;">
-                                <CustomCell :defaultValue="params.filterParams.value6?.value" :data="Enum.priceLowCostList"
-                                    :option="{ label: 'ruleName', value: 'priceRange' }"
-                                    @change="onCellChange($event, 'value6')" :showInput="true">
-                                </CustomCell>
-                            </view>
-                        </van-dropdown-item>
-                    </van-dropdown-menu>
+                        </template>
+
+                        <!-- <view :class="['index-search-bottom-item', showContent === 2 && showActive ? 'active' : '']"
+                            @click="handleSearch(2)">
+                            <text>售价</text>
+                            <uni-icons type="bottom" size="14"></uni-icons>
+                        </view>
+                        <view :class="['index-search-bottom-item', showContent === 3 && showActive ? 'active' : '']"
+                            @click="handleSearch(3)">
+                            <text>月低消</text>
+                            <uni-icons type="bottom" size="14"></uni-icons>
+                        </view>
+                        <view :class="['index-search-bottom-item', showContent === 4 && showActive ? 'active' : '']"
+                            @click="handleSearch(4)">
+                            <text>优质号段</text>
+                            <uni-icons type="bottom" size="14"></uni-icons>
+                        </view> -->
+                    </view>
+                    <view class="index-search-bottom-modal">
+                        <CustomCell v-if="showContent == 1 && showActive" :defaultValue="params.filterParams.value4?.value"
+                            :data="Object.values(Enum.numberSegmentRule)"
+                            :option="{ label: 'ruleName', children: 'ruleList', value: 'ruleCode' }"
+                            @change="onCellChange($event, 'value4')" :showLHRule="true">
+                        </CustomCell>
+                        <CustomCell v-if="showContent == 2 && showActive" :defaultValue="params.filterParams.value5?.value"
+                            :data="Enum.priceList" :option="{ label: 'ruleName', value: 'priceRange' }"
+                            @change="onCellChange($event, 'value5')" :showInput="true">
+                        </CustomCell>
+                        <CustomCell v-if="showContent == 3 && showActive" :defaultValue="params.filterParams.value6?.value"
+                            :data="Enum.priceLowCostList" :option="{ label: 'ruleName', value: 'priceRange' }"
+                            @change="onCellChange($event, 'value6')" :showInput="true">
+                        </CustomCell>
+                        <CustomCell v-if="showContent == 4 && showActive" :defaultValue="params.filterParams.value6?.value"
+                            :data="Enum.sectionList" :option="{ label: 'ruleName', value: 'priceRange' }"
+                            @change="onCellChange($event, 'value6')">
+                        </CustomCell>
+                    </view>
                 </view>
             </view>
         </van-sticky>
@@ -124,7 +145,7 @@
 
         <!-- 筛选弹窗 -->
         <uni-popup background-color="#fff" ref="filterPopup">
-            <FilterModal :showParams="params.filterParams" @change="onchange" @ok="handleFilterOK"
+            <FilterModal :showParams="params.filterParams" @ok="handleFilterOK"
                 @close="filterPopup.close(); dropMenu.close()">
             </FilterModal>
         </uni-popup>
@@ -159,6 +180,36 @@ const dropMenu = ref()
 const dropdownMenuRef = ref()
 const showKeyboard = ref(false);
 const filterNum = ref()
+const showContent = ref()
+const showActive = ref(false)
+
+const searchBottomList = ref([{
+    label: '不含4',
+    isClick: true,
+    active: false,
+    value: 'value8'
+}, {
+    label: '靓号规则',
+    type: '1',
+    active: false,
+    value: 'value4'
+}, {
+    label: '售价',
+    type: '2',
+    active: false,
+    value: 'value5'
+}, {
+    label: '月低消',
+    type: '3',
+    active: false,
+    value: 'value6'
+}, {
+    label: '优质号段',
+    type: '4',
+    active: false,
+    value: 'value7'
+}])
+
 
 // 传参
 const params = reactive({
@@ -208,7 +259,6 @@ const onSearchMode = () => {
 // 筛选数据
 const handleFilterOK = (value) => {
     filterNum.value = Object.values(value).filter(item => item.value).length
-    console.log('value', value)
     params.filterParams = value
     filterPopup.value.close()
     dropMenu.value.close()
@@ -216,16 +266,12 @@ const handleFilterOK = (value) => {
 
 const onCellChange = (value, type) => {
     params.filterParams[type] = value;
-    dropdownMenuRef.value.close()
+    showActive.value = false
 }
 
-// 获取号码地区列表
+// 获取地区列表
 const getAreaList = async (isSearch = false) => {
-    const {
-        data
-    } = await getAreaListApi({
-        cityId: String(params.cityId)
-    })
+    const { data } = await getAreaListApi({ cityId: String(params.cityId) })
     areaState.areaList = filterLevel(data.lists, 2)
     areaState.receivingAddressList = filterLevel(data.lists, 3)
     areaState.defaultAreaList = data.lists[data.provinceIndex].children.map(item => {
@@ -239,19 +285,16 @@ const getAreaList = async (isSearch = false) => {
     if (isSearch) {
         const index = areaState.defaultAreaList.findIndex(item => item.id === params.cityId)
         areaState.defaultAreaList[index].active = true
-        areaState.defaultArea = data.lists.find(item => item.id === params.provinceId)?.name
+        areaState.defaultArea = data.currentCity.name
     } else {
         // 初始化
-
-        // 省
-        areaState.defaultArea = data.lists[data.provinceIndex].name
         params.provinceId = data.lists[data.provinceIndex].id
-
-        // 城
+        areaState.defaultArea = data.currentCity.name
         const index = areaState.defaultAreaList.findIndex(item => item.id === data.locationCityId)
         params.cityId = areaState.defaultAreaList[index].id
         areaState.defaultAreaList[index].active = true
     }
+
 }
 
 // 获取号码列表
@@ -283,7 +326,53 @@ const onchange = (value) => {
     params.cityId = value.cityId
     params.provinceId = value.provinceId
     cityPickerPopup.value.close()
+    dropMenu.value.close()
     getAreaList(true)
+}
+
+const handleSearch = (item) => {
+    if (item.isClick) {
+        item.active = !item.active
+        // searchBottomList[0].active = !item.active
+        if (item.active) {
+            params.filterParams.value8 = {
+                value: 4,
+                label: '不含4'
+            }
+        } else {
+            params.filterParams.value8 = null
+        }
+        return false
+    }
+    if (showContent.value === item.type) {
+        showActive.value = !showActive.value
+    } else {
+        showActive.value = true
+        showContent.value = item.type
+    }
+}
+
+// const handleNoFour = () => {
+//     params.filterParams.value8 = {
+//         value: 4,
+//         label: '不含4'
+//     }
+// }
+
+const customNoFourStyle = () => {
+    const value = params.filterParams.value8?.value
+    console.log(value, 555)
+    return {
+        color: value ? '#fff' : '#787878',
+        backgroundColor: value ? '#e74e4b' : 'f2f2f7'
+    }
+}
+
+const customStyle = (value) => {
+    return {
+        color: value ? '#fff' : '#787878',
+        backgroundColor: value ? '#e74e4b' : 'f2f2f7'
+    }
 }
 
 // 分页
@@ -316,16 +405,4 @@ page {
 }
 
 @import "./index.scss"
-</style>
-
-<style lang="scss">
-.van-password-input {
-    margin: 0 !important;
-}
-
-::v-deep {
-    .van-password-input__security {
-        height: 40px;
-    }
-}
 </style>

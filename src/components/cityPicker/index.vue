@@ -72,7 +72,7 @@ onMounted(() => {
     // 回显市
     if (props.showParams.cityId) {
         const index = props.province.findIndex(item => item.id === props.showParams.provinceId)
-        state.city = props.province[index].children
+        state.city = props.province[index]?.children
 
         // 清空选中状态
         state.city.forEach(item => {
